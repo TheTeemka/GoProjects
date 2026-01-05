@@ -1,0 +1,1 @@
+SELECT schedules.* FROM students JOIN schedules ON schedules.group_id = students.group_id WHERE students.id = 1;

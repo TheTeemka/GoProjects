@@ -1,0 +1,61 @@
+
+INSERT INTO faculties (name) VALUES ('SEDS'), ('SSH');
+
+INSERT INTO groups (name, faculty_id) VALUES 
+('Group A', 1),
+('Group B', 1),
+('Group C', 2),
+('Group D', 2);
+
+INSERT INTO students (name, group_id, gender) VALUES 
+('Student 1', 1, 'M'),
+('Student 2', 1, 'F'),
+('Student 3', 1, 'M'),
+('Student 4', 1, 'F'),
+('Student 5', 1, 'M'),
+('Student 6', 1, 'F'),
+('Student 7', 1, 'M'),
+('Student 8', 1, 'F'),
+('Student 9', 2, 'M'),
+('Student 10', 2, 'F'),
+('Student 11', 2, 'M'),
+('Student 12', 2, 'F'),
+('Student 13', 2, 'M'),
+('Student 14', 2, 'F'),
+('Student 15', 2, 'M'),
+('Student 16', 2, 'F'),
+('Student 17', 3, 'M'),
+('Student 18', 3, 'F'),
+('Student 19', 3, 'M'),
+('Student 20', 3, 'F'),
+('Student 21', 3, 'M'),
+('Student 22', 3, 'F'),
+('Student 23', 3, 'M'),
+('Student 24', 4, 'F'),
+('Student 25', 4, 'M'),
+('Student 26', 4, 'F'),
+('Student 27', 4, 'M'),
+('Student 28', 4, 'F'),
+('Student 29', 4, 'M'),
+('Student 30', 4, 'F'); 
+
+INSERT INTO schedules (subject, day_of_week, time, group_id) VALUES 
+('Math', 'Monday', '9:00', 1),
+('Physics', 'Tuesday', '10:00', 1),
+('English', 'Wednesday', '11:00', 1),
+('History', 'Thursday', '12:00', 1),
+('Chemistry', 'Friday', '13:00', 1),
+('Biology', 'Monday', '9:00', 2),
+('Algebra', 'Tuesday', '10:00', 2),
+('Literature', 'Wednesday', '11:00', 2),
+('Geography', 'Thursday', '12:00', 2),
+('Computer Science', 'Friday', '13:00', 2),
+('Calculus', 'Monday', '9:00', 3),
+('Physics', 'Tuesday', '10:00', 3),
+('English', 'Wednesday', '11:00', 3),
+('History', 'Thursday', '12:00', 3),
+('Art', 'Friday', '13:00', 3),
+('Math', 'Monday', '9:00', 4),
+('Science', 'Tuesday', '10:00', 4),
+('Literature', 'Wednesday', '11:00', 4),
+('Economics', 'Thursday', '12:00', 4);
