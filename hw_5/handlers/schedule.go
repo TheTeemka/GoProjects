@@ -4,16 +4,16 @@ import (
 	"context"
 	"strconv"
 
-	service "github.com/temirlanbayangazy/GoProjects/hw_4/services"
+	"github.com/TheTeemka/GoProjects/hw_5/services"
 
 	"github.com/labstack/echo"
 )
 
 type ScheduleHandler struct {
-	service *service.ScheduleService
+	service *services.ScheduleService
 }
 
-func NewScheduleHandler(service *service.ScheduleService) *ScheduleHandler {
+func NewScheduleHandler(service *services.ScheduleService) *ScheduleHandler {
 	return &ScheduleHandler{
 		service: service,
 	}
@@ -57,12 +57,4 @@ func (sh *ScheduleHandler) GetForAll(c echo.Context) error {
 	}
 
 	return c.JSON(200, schedule)
-}
-
-func (sh *ScheduleHandler) RegisterRoutees(e *echo.Echo) *echo.Echo {
-	e.GET("/student/:id", sh.GetForStudent)
-	e.GET("/schedule/group/:id", sh.GetForGroup)
-	e.GET("/all_class_schedule", sh.GetForAll)
-
-	return e
 }

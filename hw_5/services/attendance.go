@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/temirlanbayangazy/GoProjects/hw_4/models"
-	"github.com/temirlanbayangazy/GoProjects/hw_4/repository"
+	"github.com/TheTeemka/GoProjects/hw_5/models"
+	"github.com/TheTeemka/GoProjects/hw_5/repository"
 )
 
 type AttendanceService struct {

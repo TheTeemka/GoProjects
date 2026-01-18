@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/temirlanbayangazy/GoProjects/hw_4/models"
+	"github.com/TheTeemka/GoProjects/hw_5/models"
 
 	"github.com/jackc/pgx/v4"
 )

@@ -1,4 +1,4 @@
-module github.com/temirlanbayangazy/GoProjects/hw_4
+module github.com/TheTeemka/GoProjects/hw_5
 
 go 1.25.5
 
@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.3 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect

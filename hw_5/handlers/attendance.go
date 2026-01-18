@@ -3,17 +3,16 @@ package handlers
 import (
 	"strconv"
 
-	"github.com/temirlanbayangazy/GoProjects/hw_4/models"
-	service "github.com/temirlanbayangazy/GoProjects/hw_4/services"
-
+	"github.com/TheTeemka/GoProjects/hw_5/models"
+	"github.com/TheTeemka/GoProjects/hw_5/services"
 	"github.com/labstack/echo"
 )
 
 type AttendanceHandler struct {
-	attendanceService *service.AttendanceService
+	attendanceService *services.AttendanceService
 }
 
-func NewAttendanceHandler(attendanceService *service.AttendanceService) *AttendanceHandler {
+func NewAttendanceHandler(attendanceService *services.AttendanceService) *AttendanceHandler {
 	return &AttendanceHandler{
 		attendanceService: attendanceService,
 	}
@@ -77,12 +76,4 @@ func (ah *AttendanceHandler) GetAllAttendanceBySubjectID(c echo.Context) error {
 	}
 
 	return c.JSON(200, resp)
-}
-
-func (h *AttendanceHandler) RegisterRoutees(e *echo.Echo) *echo.Echo {
-	e.POST("/attendance/subject", h.CreateAttendance)
-	e.GET("/attendanceByStudentId/:student_id", h.GetAllAttendanceByStudentID)
-	e.GET("/attendanceBySubjectId/:subject_id", h.GetAllAttendanceBySubjectID)
-
-	return e
 }
