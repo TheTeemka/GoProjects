@@ -3,7 +3,10 @@ package handlers
 import (
 	"github.com/TheTeemka/GoProjects/hw_5/middlewares"
 	"github.com/TheTeemka/GoProjects/hw_5/services"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
+
+	_ "github.com/TheTeemka/GoProjects/hw_5/docs"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 func RegisterRoutes(userHandler *UserHandler, attHandler *AttendanceHandler, scheduleHandler *ScheduleHandler, jwtService *services.JWTService) *echo.Echo {
@@ -12,7 +15,7 @@ func RegisterRoutes(userHandler *UserHandler, attHandler *AttendanceHandler, sch
 	authMiddleware := middlewares.AuthMiddleware(jwtService)
 	{
 		attroup := e.Group("/attendance")
-		attroup.POST("/attendance/subject", attHandler.CreateAttendance)
+		attroup.POST("/subject", attHandler.CreateAttendance)
 		attroup.GET("/attendanceByStudentId/:student_id", attHandler.GetAllAttendanceByStudentID)
 		attroup.GET("/attendanceBySubjectId/:subject_id", attHandler.GetAllAttendanceBySubjectID)
 	}
@@ -30,6 +33,8 @@ func RegisterRoutes(userHandler *UserHandler, attHandler *AttendanceHandler, sch
 		authGroup.GET("/user/login", userHandler.Login)
 		authGroup.GET("/users/me", userHandler.GetMe, authMiddleware)
 	}
+
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	return e
 }

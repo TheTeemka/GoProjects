@@ -5,7 +5,7 @@ import (
 
 	"github.com/TheTeemka/GoProjects/hw_5/services"
 	"github.com/TheTeemka/GoProjects/hw_5/utils"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 func AuthMiddleware(jwtService *services.JWTService) echo.MiddlewareFunc {

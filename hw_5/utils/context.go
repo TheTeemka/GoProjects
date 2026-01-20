@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/TheTeemka/GoProjects/hw_5/models"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 const (

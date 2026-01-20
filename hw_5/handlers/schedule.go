@@ -6,7 +6,7 @@ import (
 
 	"github.com/TheTeemka/GoProjects/hw_5/services"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type ScheduleHandler struct {
@@ -19,6 +19,15 @@ func NewScheduleHandler(service *services.ScheduleService) *ScheduleHandler {
 	}
 }
 
+// GetForStudent godoc
+// @Summary Get schedule for a student
+// @Tags Schedule
+// @Produce json
+// @Param id path int true "Student ID"
+// @Success 200 {array} models.Schedule
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /schedule/student/{id} [get]
 func (sh *ScheduleHandler) GetForStudent(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
@@ -35,6 +44,15 @@ func (sh *ScheduleHandler) GetForStudent(c echo.Context) error {
 
 }
 
+// GetForGroup godoc
+// @Summary Get schedule for a group
+// @Tags Schedule
+// @Produce json
+// @Param id path int true "Group ID"
+// @Success 200 {array} models.Schedule
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /schedule/schedule/group/{id} [get]
 func (sh *ScheduleHandler) GetForGroup(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
@@ -50,6 +68,13 @@ func (sh *ScheduleHandler) GetForGroup(c echo.Context) error {
 	return c.JSON(200, schedule)
 }
 
+// GetForAll godoc
+// @Summary Get schedule for all classes
+// @Tags Schedule
+// @Produce json
+// @Success 200 {array} models.Schedule
+// @Failure 500 {object} map[string]any
+// @Router /schedule/all_class_schedule [get]
 func (sh *ScheduleHandler) GetForAll(c echo.Context) error {
 	schedule, err := sh.service.GetAll(context.Background())
 	if err != nil {
