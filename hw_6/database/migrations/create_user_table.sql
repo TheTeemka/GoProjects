@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(32) NOT NULL,
+    password_hash BYTEA NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW
+)
