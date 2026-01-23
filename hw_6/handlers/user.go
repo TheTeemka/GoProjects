@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"github.com/TheTeemka/GoProjects/hw_5/models"
-	"github.com/TheTeemka/GoProjects/hw_5/utils"
+	"github.com/TheTeemka/GoProjects/hw_6/models"
+	"github.com/TheTeemka/GoProjects/hw_6/utils"
 	"github.com/labstack/echo/v4"
 )
 

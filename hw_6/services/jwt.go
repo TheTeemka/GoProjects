@@ -3,7 +3,7 @@ package services
 import (
 	"time"
 
-	"github.com/TheTeemka/GoProjects/hw_5/models"
+	"github.com/TheTeemka/GoProjects/hw_6/models"
 	"github.com/golang-jwt/jwt/v5"
 )
 

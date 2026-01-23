@@ -2,31 +2,32 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
 	"log"
-	"time"
 
-	"github.com/TheTeemka/GoProjects/hw_5/database"
-	"github.com/TheTeemka/GoProjects/hw_5/handlers"
-	"github.com/TheTeemka/GoProjects/hw_5/repository"
-	"github.com/TheTeemka/GoProjects/hw_5/services"
+	"github.com/TheTeemka/GoProjects/hw_6/config"
+	"github.com/TheTeemka/GoProjects/hw_6/database"
+	"github.com/TheTeemka/GoProjects/hw_6/handlers"
+	"github.com/TheTeemka/GoProjects/hw_6/repository"
+	"github.com/TheTeemka/GoProjects/hw_6/services"
 )
 
 func main() {
-	const (
-		port     = ":8020"
-		dbString = "postgres://dean:dean_password@localhost:5432/university"
-		jwtTTL   = 30 * time.Minute
-	)
-	var (
-		secretKey = decodeBase64("N33BOcxkBlFmYmk3imxTvlIWp6MwgKc83Xv+hw+11ns=")
-	)
+	// const (
+	// 	port     = ":8020"
+	// 	dbString = "postgres://dean:dean_password@db:5432/university"
+	// 	jwtTTL   = 30 * time.Minute
+	// )
+	// var (
+	// 	secretKey = decodeBase64("N33BOcxkBlFmYmk3imxTvlIWp6MwgKc83Xv+hw+11ns=")
+	// )
 
-	conn := database.OpenConnection(dbString)
+	cfg := config.GetConfig()
+
+	conn := database.OpenConnection(cfg.DB.String())
 	defer conn.Close(context.Background())
 	log.Println("Database connected")
 
-	jwtService := services.NewJWTService(secretKey, jwtTTL)
+	jwtService := services.NewJWTService(cfg.SecretKey, cfg.JWTTTL)
 
 	scheduleRepo := repository.NewScheduleRepository(conn)
 	scheduleService := services.NewScheduleService(scheduleRepo)
@@ -41,17 +42,9 @@ func main() {
 	userHandler := handlers.NewUserHandler(userService, jwtService)
 
 	e := handlers.RegisterRoutes(userHandler, attendanceHandler, scheduleHandler, jwtService)
-	log.Println("Starting server on port", port)
-	if err := e.Start(port); err != nil {
+	log.Println("Starting server on port", cfg.Port)
+	if err := e.Start(cfg.Port); err != nil {
 		log.Fatalf("Error: %s", err)
 	}
 	log.Println("Finished execution")
-}
-
-func decodeBase64(str string) []byte {
-	data, err := base64.StdEncoding.DecodeString(str)
-	if err != nil {
-		log.Fatalf("Failed to decode base64 string: %v", err)
-	}
-	return data
 }

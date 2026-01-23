@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/TheTeemka/GoProjects/hw_5/models"
+	"github.com/TheTeemka/GoProjects/hw_6/models"
 	"github.com/jackc/pgx/v4"
 )
 
@@ -18,9 +18,9 @@ func NewUserRepository(conn *pgx.Conn) *UserRepository {
 }
 
 func (ur *UserRepository) CreateUser(ctx context.Context, user *models.UserEntity) error {
-	query := `INSERT INTO users ( email, password_hash) VALUES ($1, $2)`
+	query := `INSERT INTO users ( email, role, password_hash) VALUES ($1, $2, $3)`
 
-	_, err := ur.conn.Exec(ctx, query, user.Email, user.PasswordHash)
+	_, err := ur.conn.Exec(ctx, query, user.Email, user.Role, user.PasswordHash)
 	if err != nil {
 		return err
 	}
@@ -28,15 +28,14 @@ func (ur *UserRepository) CreateUser(ctx context.Context, user *models.UserEntit
 }
 
 func (ur *UserRepository) GetUserByEmail(ctx context.Context, email string) (*models.UserEntity, error) {
-	query := `SELECT id, email, password_hash FROM users WHERE email=$1`
-
+	query := `SELECT id, email, role, password_hash FROM users WHERE email=$1`
 	row := ur.conn.QueryRow(ctx, query, email)
 
 	var user models.UserEntity
-	err := row.Scan(&user.ID, &user.Email, &user.PasswordHash)
+	err := row.Scan(&user.ID, &user.Email, &user.Role, &user.PasswordHash)
 	if err != nil {
-
 		return nil, err
 	}
+
 	return &user, nil
 }

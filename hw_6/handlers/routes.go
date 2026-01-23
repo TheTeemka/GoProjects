@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"github.com/TheTeemka/GoProjects/hw_5/middlewares"
-	"github.com/TheTeemka/GoProjects/hw_5/services"
+	"github.com/TheTeemka/GoProjects/hw_6/middlewares"
+	"github.com/TheTeemka/GoProjects/hw_6/services"
 	"github.com/labstack/echo/v4"
 
-	_ "github.com/TheTeemka/GoProjects/hw_5/docs"
+	_ "github.com/TheTeemka/GoProjects/hw_6/docs"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 

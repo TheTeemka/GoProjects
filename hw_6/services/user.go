@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/TheTeemka/GoProjects/hw_5/models"
-	"github.com/TheTeemka/GoProjects/hw_5/utils"
+	"github.com/TheTeemka/GoProjects/hw_6/models"
+	"github.com/TheTeemka/GoProjects/hw_6/utils"
 )
 
 type IUserRepository interface {
@@ -29,8 +29,14 @@ func (us *UserService) CreateUser(dto *models.CreateUserRequest) error {
 		return fmt.Errorf("err in CreateUser: %w", err)
 	}
 
+	userRole, err := models.ParseUserRole(dto.Role)
+	if err != nil {
+		return fmt.Errorf("err in CreateUser: %w", err)
+	}
+
 	entity := &models.UserEntity{
 		Email:        dto.Email,
+		Role:         userRole,
 		PasswordHash: passwordHash,
 	}
 
