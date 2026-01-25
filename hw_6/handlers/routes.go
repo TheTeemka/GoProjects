@@ -12,6 +12,8 @@ import (
 func RegisterRoutes(userHandler *UserHandler, attHandler *AttendanceHandler, scheduleHandler *ScheduleHandler, jwtService *services.JWTService) *echo.Echo {
 	e := echo.New()
 
+	e.GET("/health", HealthCheck)
+
 	authMiddleware := middlewares.AuthMiddleware(jwtService)
 	{
 		attroup := e.Group("/attendance")
