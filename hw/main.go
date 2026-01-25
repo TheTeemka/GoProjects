@@ -12,20 +12,15 @@ import (
 )
 
 func main() {
-	// const (
-	// 	port     = ":8020"
-	// 	dbString = "postgres://dean:dean_password@db:5432/university"
-	// 	jwtTTL   = 30 * time.Minute
-	// )
-	// var (
-	// 	secretKey = decodeBase64("N33BOcxkBlFmYmk3imxTvlIWp6MwgKc83Xv+hw+11ns=")
-	// )
-
 	cfg := config.GetConfig()
 
 	conn := database.OpenConnection(cfg.DB.String())
 	defer conn.Close(context.Background())
 	log.Println("Database connected")
+
+	sqlDB := database.PGXConnToSQLDB(conn)
+	database.GooseMigrate(sqlDB, "./database/migrations")
+	log.Println("Database migrated")
 
 	jwtService := services.NewJWTService(cfg.SecretKey, cfg.JWTTTL)
 
