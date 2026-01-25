@@ -29,6 +29,7 @@ func (entity *UserEntity) ToUserDTO() *UserDTO {
 	return &UserDTO{
 		ID:           entity.ID,
 		Email:        entity.Email,
+		Role:         entity.Role,
 		PasswordHash: entity.PasswordHash,
 	}
 }
