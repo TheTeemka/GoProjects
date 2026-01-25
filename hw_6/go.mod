@@ -1,6 +1,6 @@
 module github.com/TheTeemka/GoProjects/hw_6
 
-go 1.25.5
+go 1.25.0
 
 require (
 	github.com/go-playground/validator/v10 v10.30.1
