@@ -5,9 +5,9 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex justify-center px-4">
       <div className="mt-45 w-full max-w-full rounded-lg text-center px-6 sm:px-12">
-        <h1 className="text-6xl md:text-9xl font-bold mb-10 w-full">
+        <h1 className="text-6xl md:text-8xl font-bold mb-10 w-full">
           Welcome to <br />
-          the App
+          The University <br /> Dashboard
         </h1>
         <p className="text-sm text-muted-foreground mb-4">
           Get started by signing in or creating a new account.
