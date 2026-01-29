@@ -4,6 +4,7 @@ import (
 	"github.com/TheTeemka/GoProjects/hw_6/middlewares"
 	"github.com/TheTeemka/GoProjects/hw_6/services"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 
 	_ "github.com/TheTeemka/GoProjects/hw_6/docs"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -11,6 +12,12 @@ import (
 
 func RegisterRoutes(userHandler *UserHandler, attHandler *AttendanceHandler, scheduleHandler *ScheduleHandler, jwtService *services.JWTService) *echo.Echo {
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"http://localhost:*"}, // explicit origin(s)
+		AllowCredentials: true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+	}))
 
 	e.GET("/health", HealthCheck)
 
@@ -32,7 +39,7 @@ func RegisterRoutes(userHandler *UserHandler, attHandler *AttendanceHandler, sch
 	{
 		authGroup := e.Group("/auth")
 		authGroup.POST("/register", userHandler.CreateUser)
-		authGroup.GET("/user/login", userHandler.Login)
+		authGroup.POST("/user/login", userHandler.Login)
 		authGroup.GET("/users/me", userHandler.GetMe, authMiddleware)
 	}
 

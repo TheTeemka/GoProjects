@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/TheTeemka/GoProjects/hw_6/models"
 	"github.com/jackc/pgx/v4"
@@ -34,6 +35,9 @@ func (ur *UserRepository) GetUserByEmail(ctx context.Context, email string) (*mo
 	var user models.UserEntity
 	err := row.Scan(&user.ID, &user.Email, &user.Role, &user.PasswordHash)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
