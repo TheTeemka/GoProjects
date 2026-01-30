@@ -19,10 +19,10 @@ func NewJWTService(secretKey []byte, ttl time.Duration) *JWTService {
 	}
 }
 
-func (js *JWTService) CreateToken(userID int, email string) (string, error) {
+func (js *JWTService) CreateToken(user *models.UserDTO) (string, error) {
 	claims := &models.UserClaims{
-		UserID: userID,
-		Email:  email,
+		UserID: user.ID,
+		Email:  user.Email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   "user_claims",
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(js.ttl)),

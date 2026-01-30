@@ -10,7 +10,7 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-func RegisterRoutes(userHandler *UserHandler, attHandler *AttendanceHandler, scheduleHandler *ScheduleHandler, jwtService *services.JWTService) *echo.Echo {
+func RegisterRoutes(userHandler *AuthHandler, attHandler *AttendanceHandler, scheduleHandler *ScheduleHandler, jwtService *services.JWTService) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"http://localhost:*"}, // explicit origin(s)
@@ -41,9 +41,11 @@ func RegisterRoutes(userHandler *UserHandler, attHandler *AttendanceHandler, sch
 		authGroup.POST("/register", userHandler.CreateUser)
 		authGroup.POST("/user/login", userHandler.Login)
 		authGroup.GET("/users/me", userHandler.GetMe, authMiddleware)
+		authGroup.POST("/refresh", userHandler.RefreshAccessToken)
 	}
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
+	e.HTTPErrorHandler = ErrorHandler
 	return e
 }

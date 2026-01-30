@@ -72,7 +72,7 @@ export default function RegisterPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="password"
+              placeholder="confirm password"
             />
           </div>
           <div>

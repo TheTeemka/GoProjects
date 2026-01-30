@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/TheTeemka/GoProjects/hw_6/models"
 	"github.com/TheTeemka/GoProjects/hw_6/utils"
 	"github.com/labstack/echo/v4"
@@ -9,22 +11,21 @@ import (
 type IUserService interface {
 	CreateUser(dto *models.CreateUserRequest) error
 	GetUserByEmail(email string) (*models.UserDTO, error)
+	Login(email, plainPassword string) (accessToken string, refreshToken string, err error)
+	RefreshAccessToken(refreshToken string) (string, error)
 }
 
-type IJWTService interface {
-	CreateToken(userID int, email string) (string, error)
-	ParseToken(tokenStr string) (*models.UserClaims, error)
+type ITokenService interface {
+	ValitateToken(userID int, token string) (bool, error)
 }
 
-type UserHandler struct {
+type AuthHandler struct {
 	userService IUserService
-	jwtService  IJWTService
 }
 
-func NewUserHandler(userService IUserService, jwtService IJWTService) *UserHandler {
-	return &UserHandler{
+func NewUserHandler(userService IUserService) *AuthHandler {
+	return &AuthHandler{
 		userService: userService,
-		jwtService:  jwtService,
 	}
 }
 
@@ -38,7 +39,7 @@ func NewUserHandler(userService IUserService, jwtService IJWTService) *UserHandl
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /auth/register [post]
-func (uh *UserHandler) CreateUser(c echo.Context) error {
+func (uh *AuthHandler) CreateUser(c echo.Context) error {
 	var req models.CreateUserRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(400, map[string]string{"error": err.Error()})
@@ -61,7 +62,7 @@ func (uh *UserHandler) CreateUser(c echo.Context) error {
 // @Failure 500 {object} map[string]string
 // @Security BearerAuth
 // @Router /auth/users/me [get]
-func (uh *UserHandler) GetMe(c echo.Context) error {
+func (uh *AuthHandler) GetMe(c echo.Context) error {
 	userClaims, ok := utils.GetUserClaims(c)
 	if !ok {
 		return c.JSON(401, map[string]string{"error": "unauthorized"})
@@ -91,29 +92,41 @@ func (uh *UserHandler) GetMe(c echo.Context) error {
 // @Failure 401 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /auth/user/login [get]
-func (uh *UserHandler) Login(c echo.Context) error {
+func (uh *AuthHandler) Login(c echo.Context) error {
 	var req models.LoginUserRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(400, map[string]string{"error": err.Error()})
 	}
 
-	userDTO, err := uh.userService.GetUserByEmail(req.Email)
+	accessToken, refreshToken, err := uh.userService.Login(req.Email, req.PlainPassword)
+
 	if err != nil {
-		return c.JSON(500, map[string]string{"error": err.Error()})
+		return err
 	}
 
-	if userDTO == nil {
-		return c.JSON(401, map[string]string{"error": "invalid email or password"})
-	}
+	c.SetCookie(&http.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+		Path:     "/",
+		MaxAge:   60 * 60 * 24 * 7,
+	})
 
-	if err := utils.ComparePassword(userDTO.PasswordHash, []byte(req.PlainPassword)); err != nil {
-		return c.JSON(401, map[string]string{"error": "invalid email or password"})
-	}
+	return c.JSON(200, map[string]string{"access_token": accessToken})
+}
 
-	token, err := uh.jwtService.CreateToken(userDTO.ID, userDTO.Email)
+func (uh *AuthHandler) RefreshAccessToken(c echo.Context) error {
+	cookie, err := c.Cookie("refresh_token")
 	if err != nil {
-		return c.JSON(500, map[string]string{"error": err.Error()})
+		return c.JSON(401, map[string]string{"error": "unauthorized"})
+	}
+	refreshToken := cookie.Value
+
+	accessToken, err := uh.userService.RefreshAccessToken(refreshToken)
+	if err != nil {
+		return err
 	}
 
-	return c.JSON(200, map[string]string{"access_token": token})
+	return c.JSON(200, map[string]string{"access_token": accessToken})
 }

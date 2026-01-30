@@ -22,7 +22,10 @@ func main() {
 	database.GooseMigrate(sqlDB, "./database/migrations")
 	log.Println("Database migrated")
 
-	jwtService := services.NewJWTService(cfg.SecretKey, cfg.JWTTTL)
+	jwtService := services.NewJWTService(cfg.JWT.SecretKey, cfg.JWT.TTL)
+
+	tokenRepo := repository.NewTokenRepository(conn)
+	refreshTokenService := services.NewTokenService(tokenRepo, cfg.RefreshToken.Size, cfg.RefreshToken.Type, cfg.RefreshToken.TTL)
 
 	scheduleRepo := repository.NewScheduleRepository(conn)
 	scheduleService := services.NewScheduleService(scheduleRepo)
@@ -33,8 +36,8 @@ func main() {
 	attendanceHandler := handlers.NewAttendanceHandler(attendanceService)
 
 	userRepo := repository.NewUserRepository(conn)
-	userService := services.NewUserService(userRepo)
-	userHandler := handlers.NewUserHandler(userService, jwtService)
+	userService := services.NewUserService(userRepo, jwtService, refreshTokenService)
+	userHandler := handlers.NewUserHandler(userService)
 
 	e := handlers.RegisterRoutes(userHandler, attendanceHandler, scheduleHandler, jwtService)
 	log.Println("Starting server on port", cfg.Port)

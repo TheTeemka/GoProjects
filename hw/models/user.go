@@ -63,7 +63,7 @@ var roleMap = map[string]UserRole{
 func ParseUserRole(role string) (UserRole, error) {
 	r, exists := roleMap[strings.ToLower(role)]
 	if !exists {
-		return "", ErrUserRoleNotFound
+		return "", ErrInvalidUserRole
 	}
 	return r, nil
 }

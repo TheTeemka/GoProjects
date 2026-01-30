@@ -13,18 +13,29 @@ import (
 )
 
 type AppConfig struct {
-	Port      string
-	JWTTTL    time.Duration
-	SecretKey []byte
-	DB        DBConfig
+	Port         string             `validate:"required"`
+	DB           DBConfig           `validate:"required"`
+	RefreshToken RefreshTokenConfig `validate:"required"`
+	JWT          JWTConfig          `validate:"required"`
 }
 
 type DBConfig struct {
-	Host     string
-	Port     int
-	User     string
-	Password string
-	DBName   string
+	Host     string `validate:"required"`
+	Port     int    `validate:"gt=0"`
+	User     string `validate:"required"`
+	Password string `validate:"required"`
+	DBName   string `validate:"required"`
+}
+
+type RefreshTokenConfig struct {
+	Size int           `validate:"gt=0"`
+	Type string        `validate:"required"`
+	TTL  time.Duration `validate:"gt=0"`
+}
+
+type JWTConfig struct {
+	SecretKey []byte        `validate:"required"`
+	TTL       time.Duration `validate:"gt=0"`
 }
 
 func (cfg *DBConfig) String() string {
@@ -52,16 +63,33 @@ func GetConfig() *AppConfig {
 		log.Fatalf("Invalid POSTGRES_PORT: %v", err)
 	}
 
+	refresh_token_size, err := strconv.Atoi(os.Getenv("REFRESH_TOKEN_SIZE"))
+	if err != nil {
+		log.Fatalf("Invalid REFRESH_TOKEN_SIZE: %v", err)
+	}
+
+	refresh_token_ttl, err := time.ParseDuration(os.Getenv("REFRESH_TOKEN_TTL"))
+	if err != nil {
+		log.Fatalf("Invalid REFRESH_TOKEN_TTL: %v", err)
+	}
+
 	cfg := &AppConfig{
-		Port:      os.Getenv("PORT"),
-		JWTTTL:    jwtTTL,
-		SecretKey: secretKey,
+		Port: os.Getenv("PORT"),
+		JWT: JWTConfig{
+			TTL:       jwtTTL,
+			SecretKey: secretKey,
+		},
 		DB: DBConfig{
 			Host:     os.Getenv("POSTGRES_HOST"),
 			Port:     dbPort,
 			User:     os.Getenv("POSTGRES_USER"),
 			Password: os.Getenv("POSTGRES_PASSWORD"),
 			DBName:   os.Getenv("POSTGRES_DB"),
+		},
+		RefreshToken: RefreshTokenConfig{
+			Size: refresh_token_size,
+			Type: os.Getenv("REFRESH_TOKEN_TYPE"),
+			TTL:  refresh_token_ttl,
 		},
 	}
 
