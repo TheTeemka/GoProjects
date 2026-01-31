@@ -130,3 +130,16 @@ func (uh *AuthHandler) RefreshAccessToken(c echo.Context) error {
 
 	return c.JSON(200, map[string]string{"access_token": accessToken})
 }
+
+func (uh *AuthHandler) Logout(c echo.Context) error {
+	c.SetCookie(&http.Cookie{
+		Name:     "refresh_token",
+		Value:    "",
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+		Path:     "/",
+		MaxAge:   -1,
+	})
+
+	return c.NoContent(200)
+}

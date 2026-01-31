@@ -1,5 +1,10 @@
+import { toast } from "@/lib/toast";
 import { type LoginResponse } from "@/types/user";
-import axios, { AxiosError, type AxiosInstance } from "axios";
+import axios, {
+  AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+} from "axios";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/",
@@ -17,7 +22,6 @@ async function refreshToken(): Promise<string | null> {
         });
 
         const newToken = res.data?.access_token ?? null;
-        localStorage.setItem("accessToken", newToken);
         if (newToken) {
           localStorage.setItem("accessToken", newToken);
         } else {
@@ -36,6 +40,8 @@ async function refreshToken(): Promise<string | null> {
 }
 
 apiClient.interceptors.request.use((cfg) => {
+  console.debug("apiClient request:", cfg);
+
   const token = localStorage.getItem("accessToken");
   if (token && cfg.headers) {
     cfg.headers.Authorization = `Bearer ${token}`;
@@ -47,8 +53,12 @@ apiClient.interceptors.request.use((cfg) => {
 apiClient.interceptors.response.use(
   (r) => r,
   async (err: AxiosError) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const orig = err.config as any;
+    if (!err.response) {
+      toast.error("Network error. Please check your connection.");
+      return Promise.reject(err);
+    }
+
+    const orig = err.config as AxiosRequestConfig & { _retry?: boolean };
     if (err.response?.status === 401 && !orig?._retry) {
       orig._retry = true;
       const token = await refreshToken();

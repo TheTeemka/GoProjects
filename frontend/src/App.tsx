@@ -4,6 +4,7 @@ import HomePage from "@/pages/homepage/page";
 import RegisterPage from "./pages/register/page";
 import SchedulePage from "./pages/dashboard/schedule/page";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
+import { ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
   {
@@ -23,15 +24,32 @@ const router = createBrowserRouter([
     element: <DashboardLayout />,
     children: [
       {
+        path: "",
+        element: <div> Dashboarding. time</div>,
+      },
+      {
         path: "schedule",
         element: <SchedulePage />,
+      },
+      {
+        path: "students",
+        element: <div>Students Page</div>,
+      },
+      {
+        path: "attendance",
+        element: <div>Attendance Page</div>,
       },
     ],
   },
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />;
+      <ToastContainer />
+    </>
+  );
 }
 
 export default App;

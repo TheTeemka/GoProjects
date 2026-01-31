@@ -1,6 +1,6 @@
 import type { ScheduleEvent, WeekDay } from "@/types/schedule";
 import React from "react";
-import { HoursAndMinutesToDecimalTime } from "@/utils/timeConverter";
+import { HoursAndMinutesToDecimalTime } from "@/lib/timeConverter";
 // ...existing code...
 const SUBJECT_COLOR_PALETTE: string[] = [
   "bg-red-400",
@@ -75,7 +75,7 @@ export function ScheduleCalendar({ events }: { events: ScheduleEvent[] }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+    <div className="min-h-screen dark:bg-gray-900">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white flex dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           {/* hours column */}

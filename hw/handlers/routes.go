@@ -48,7 +48,8 @@ func RegisterRoutes(userHandler *AuthHandler, attHandler *AttendanceHandler, sch
 	{
 		authGroup := e.Group("/auth")
 		authGroup.POST("/register", userHandler.CreateUser)
-		authGroup.POST("/user/login", userHandler.Login)
+		authGroup.POST("/login", userHandler.Login)
+		authGroup.POST("/logout", userHandler.Logout, authMiddleware)
 		authGroup.GET("/users/me", userHandler.GetMe, authMiddleware)
 		authGroup.POST("/refresh", userHandler.RefreshAccessToken)
 	}

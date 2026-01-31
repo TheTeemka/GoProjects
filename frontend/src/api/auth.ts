@@ -7,8 +7,12 @@ import apiClient from "./axiosClient";
 import type { User } from "@/types/user";
 
 const login = async (req: LoginRequest): Promise<LoginResponse> => {
-  const resp = await apiClient.post<LoginResponse>("/auth/user/login", req);
+  const resp = await apiClient.post<LoginResponse>("/auth/login", req);
   return resp.data;
+};
+
+const logout = async (): Promise<void> => {
+  await apiClient.post("/auth/logout");
 };
 
 const register = async (req: RegisterRequest): Promise<boolean> => {
@@ -25,4 +29,5 @@ export const authApi = {
   login,
   register,
   me,
+  logout,
 };
