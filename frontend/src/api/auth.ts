@@ -17,7 +17,7 @@ const register = async (req: RegisterRequest): Promise<boolean> => {
 };
 
 const me = async (): Promise<User> => {
-  const resp = await apiClient.get("/auth/me");
+  const resp = await apiClient.get("/auth/users/me");
   return resp.data;
 };
 

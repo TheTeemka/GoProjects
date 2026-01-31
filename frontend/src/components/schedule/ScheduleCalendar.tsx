@@ -145,8 +145,8 @@ interface EventCardProps {
 }
 
 function EventCard({ event, color = "bg-chart-1" }: EventCardProps) {
-  const startHour = HoursAndMinutesToDecimalTime(event.startTime);
-  const endHour = HoursAndMinutesToDecimalTime(event.endTime);
+  const startHour = HoursAndMinutesToDecimalTime(event.start_time);
+  const endHour = HoursAndMinutesToDecimalTime(event.end_time);
   const durationHours = endHour - startHour;
 
   console.log({ startHour, endHour, durationHours });
@@ -161,7 +161,7 @@ function EventCard({ event, color = "bg-chart-1" }: EventCardProps) {
     >
       <div className="font-semibold">{event.subject}</div>
       <div className="text-xs opacity-90">
-        {event.startTime} - {event.endTime}
+        {event.start_time} - {event.end_time}
       </div>
     </div>
   );

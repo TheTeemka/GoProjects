@@ -13,10 +13,7 @@ async function refreshToken(): Promise<string | null> {
         const res = await axios.post(
           "/auth/refresh",
           {},
-          {
-            withCredentials: true,
-            baseURL: apiClient.defaults.baseURL,
-          },
+          { baseURL: apiClient.defaults.baseURL },
         );
         const newToken = res.data?.accessToken ?? null;
         if (newToken) {

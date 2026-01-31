@@ -19,22 +19,37 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    setIsLoading(true);
+    (async () => {
+      try {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          const user = await authApi.me();
+          setUser(user);
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+      } catch {
+        setUser(null);
+        localStorage.removeItem("user");
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   }, []);
 
   const login = async (email: string, password: string) => {
     const resp = await authApi.login({ email, password });
+    console.log("Login response:", resp);
+    localStorage.setItem("accessToken", resp.access_token);
+
     const userData = await authApi.me();
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("accessToken", resp.accessToken);
   };
 
   const register = async (email: string, password: string, role: UserRole) => {

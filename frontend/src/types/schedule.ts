@@ -9,7 +9,7 @@ export type WeekDay =
 export type ScheduleEvent = {
   id: string;
   subject: string;
-  startTime: string;
-  endTime: string;
+  start_time: string;
+  end_time: string;
   day: WeekDay;
 };

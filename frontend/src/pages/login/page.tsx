@@ -27,7 +27,7 @@ export default function LoginPage() {
       setLoading(true);
       await login(email, password);
       // redirect to home after successful login
-      navigate("/");
+      navigate("/dashboard/schedule");
     } catch (err: any) {
       setError(err?.message ?? "Failed to login");
     } finally {

@@ -3,6 +3,7 @@ import LoginPage from "@/pages/login/page";
 import HomePage from "@/pages/homepage/page";
 import RegisterPage from "./pages/register/page";
 import SchedulePage from "./pages/dashboard/schedule/page";
+import { DashboardLayout } from "./components/layout/DashboardLayout";
 
 const router = createBrowserRouter([
   {
@@ -18,8 +19,14 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-    path: "/dashboard/schedule",
-    element: <SchedulePage />,
+    path: "/dashboard",
+    element: <DashboardLayout />,
+    children: [
+      {
+        path: "schedule",
+        element: <SchedulePage />,
+      },
+    ],
   },
 ]);
 
