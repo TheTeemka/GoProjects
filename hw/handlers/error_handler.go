@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/TheTeemka/GoProjects/hw_6/models"
+	"github.com/TheTeemka/GoProjects/hw/errs"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,23 +18,25 @@ func ErrorHandler(err error, c echo.Context) {
 		return
 	}
 
-	// Handle custom application errors with specific status codes
-	switch {
-	case errors.Is(err, models.ErrUserNotFound):
-		c.JSON(http.StatusNotFound, map[string]string{
-			"error": "User not found",
-		})
-	case errors.Is(err, models.ErrPasswordMismatch):
-		c.JSON(http.StatusUnauthorized, map[string]string{
-			"error": "Invalid credentials",
-		})
-	case errors.Is(err, models.ErrInvalidUserRole):
-		c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Invalid user role",
-		})
+	c.JSON(ErrToStatusCode(err), map[string]string{
+		"err": err.Error(),
+	})
+}
+
+func ErrToStatusCode(err error) int {
+	newErr := errors.Unwrap(err)
+	if newErr != nil {
+		return ErrToStatusCode(newErr)
+	}
+
+	switch err {
+	case errs.ErrUserNotFound, errs.ErrStudentNotFound, errs.ErrTokenNotFound:
+		return http.StatusNotFound
+	case errs.ErrPasswordMismatch, errs.ErrInvalidCredentials:
+		return http.StatusUnauthorized
+	case errs.ErrUserAlreadyExists:
+		return http.StatusConflict
 	default:
-		c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": err.Error(),
-		})
+		return http.StatusInternalServerError
 	}
 }

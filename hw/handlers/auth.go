@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/TheTeemka/GoProjects/hw_6/models"
-	"github.com/TheTeemka/GoProjects/hw_6/utils"
+	"github.com/TheTeemka/GoProjects/hw/models"
+	"github.com/TheTeemka/GoProjects/hw/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -39,14 +39,14 @@ func NewUserHandler(userService IUserService) *AuthHandler {
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /auth/register [post]
-func (uh *AuthHandler) CreateUser(c echo.Context) error {
+func (h *AuthHandler) CreateUser(c echo.Context) error {
 	var req models.CreateUserRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(400, map[string]string{"error": err.Error()})
 	}
 
-	if err := uh.userService.CreateUser(&req); err != nil {
-		return c.JSON(500, map[string]string{"error": err.Error()})
+	if err := h.userService.CreateUser(&req); err != nil {
+		return err
 	}
 
 	return c.NoContent(201)
@@ -62,14 +62,14 @@ func (uh *AuthHandler) CreateUser(c echo.Context) error {
 // @Failure 500 {object} map[string]string
 // @Security BearerAuth
 // @Router /auth/users/me [get]
-func (uh *AuthHandler) GetMe(c echo.Context) error {
+func (h *AuthHandler) GetMe(c echo.Context) error {
 	userClaims, ok := utils.GetUserClaims(c)
 	if !ok {
 		return c.JSON(401, map[string]string{"error": "unauthorized"})
 	}
 	email := userClaims.Email
 
-	userDTO, err := uh.userService.GetUserByEmail(email)
+	userDTO, err := h.userService.GetUserByEmail(email)
 	if err != nil {
 		return c.JSON(500, map[string]string{"error": err.Error()})
 	}
@@ -92,13 +92,13 @@ func (uh *AuthHandler) GetMe(c echo.Context) error {
 // @Failure 401 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /auth/user/login [get]
-func (uh *AuthHandler) Login(c echo.Context) error {
+func (h *AuthHandler) Login(c echo.Context) error {
 	var req models.LoginUserRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(400, map[string]string{"error": err.Error()})
 	}
 
-	accessToken, refreshToken, err := uh.userService.Login(req.Email, req.PlainPassword)
+	accessToken, refreshToken, err := h.userService.Login(req.Email, req.PlainPassword)
 
 	if err != nil {
 		return err
@@ -116,14 +116,14 @@ func (uh *AuthHandler) Login(c echo.Context) error {
 	return c.JSON(200, map[string]string{"access_token": accessToken})
 }
 
-func (uh *AuthHandler) RefreshAccessToken(c echo.Context) error {
+func (h *AuthHandler) RefreshAccessToken(c echo.Context) error {
 	cookie, err := c.Cookie("refresh_token")
 	if err != nil {
 		return c.JSON(401, map[string]string{"error": "does not have cookie"})
 	}
 	refreshToken := cookie.Value
 
-	accessToken, err := uh.userService.RefreshAccessToken(refreshToken)
+	accessToken, err := h.userService.RefreshAccessToken(refreshToken)
 	if err != nil {
 		return err
 	}
@@ -131,7 +131,7 @@ func (uh *AuthHandler) RefreshAccessToken(c echo.Context) error {
 	return c.JSON(200, map[string]string{"access_token": accessToken})
 }
 
-func (uh *AuthHandler) Logout(c echo.Context) error {
+func (h *AuthHandler) Logout(c echo.Context) error {
 	c.SetCookie(&http.Cookie{
 		Name:     "refresh_token",
 		Value:    "",

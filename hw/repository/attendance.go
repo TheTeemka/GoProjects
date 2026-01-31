@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/TheTeemka/GoProjects/hw_6/models"
+	"github.com/TheTeemka/GoProjects/hw/models"
 
 	"github.com/jackc/pgx/v4"
 )

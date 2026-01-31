@@ -3,16 +3,16 @@ package handlers
 import (
 	"os"
 
-	"github.com/TheTeemka/GoProjects/hw_6/middlewares"
-	"github.com/TheTeemka/GoProjects/hw_6/services"
+	"github.com/TheTeemka/GoProjects/hw/middlewares"
+	"github.com/TheTeemka/GoProjects/hw/services"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	_ "github.com/TheTeemka/GoProjects/hw_6/docs"
+	_ "github.com/TheTeemka/GoProjects/hw/docs"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-func RegisterRoutes(userHandler *AuthHandler, attHandler *AttendanceHandler, scheduleHandler *ScheduleHandler, jwtService *services.JWTService) *echo.Echo {
+func RegisterRoutes(userHandler *AuthHandler, attHandler *AttendanceHandler, scheduleHandler *ScheduleHandler, studentsHandler *StudentsHandler, jwtService *services.JWTService) *echo.Echo {
 	e := echo.New()
 	e.GET("/health", HealthCheck)
 
@@ -43,6 +43,16 @@ func RegisterRoutes(userHandler *AuthHandler, attHandler *AttendanceHandler, sch
 		schGroup.GET("/student/:id", scheduleHandler.GetForStudent)
 		schGroup.GET("/schedule/group/:id", scheduleHandler.GetForGroup)
 		schGroup.GET("/all_class_schedule", scheduleHandler.GetForAll)
+	}
+
+	{
+		stGroup := e.Group("/students")
+		stGroup.POST("", studentsHandler.CreateStudent)
+		stGroup.GET("/:id", studentsHandler.GetStudentByID)
+		stGroup.GET("", studentsHandler.ListStudents)
+		stGroup.GET("/group/:id", studentsHandler.GetStudentsByGroupID)
+		stGroup.PUT("/:id", studentsHandler.UpdateStudent)
+		stGroup.DELETE("/:id", studentsHandler.DeleteStudent)
 	}
 
 	{

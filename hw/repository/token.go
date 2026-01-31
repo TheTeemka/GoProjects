@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/TheTeemka/GoProjects/hw_6/models"
+	"github.com/TheTeemka/GoProjects/hw/errs"
 	"github.com/jackc/pgx/v4"
 )
 
@@ -37,7 +37,7 @@ func (tr *TokenRepository) TokenExists(ctx context.Context, token string, tokenT
 	err := row.Scan(&user_id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return 0, models.ErrTokenNotFound
+			return 0, errs.ErrTokenNotFound
 		}
 		return 0, err
 	}

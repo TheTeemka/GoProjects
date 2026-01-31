@@ -3,8 +3,8 @@ package middlewares
 import (
 	"strings"
 
-	"github.com/TheTeemka/GoProjects/hw_6/services"
-	"github.com/TheTeemka/GoProjects/hw_6/utils"
+	"github.com/TheTeemka/GoProjects/hw/services"
+	"github.com/TheTeemka/GoProjects/hw/utils"
 	"github.com/labstack/echo/v4"
 )
 

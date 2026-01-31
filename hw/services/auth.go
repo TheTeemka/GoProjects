@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/TheTeemka/GoProjects/hw_6/models"
-	"github.com/TheTeemka/GoProjects/hw_6/utils"
+	"github.com/TheTeemka/GoProjects/hw/errs"
+	"github.com/TheTeemka/GoProjects/hw/models"
+	"github.com/TheTeemka/GoProjects/hw/utils"
 )
 
 type IUserRepository interface {
@@ -23,22 +24,22 @@ type ITokenService interface {
 	ValidateToken(token string) (int, error)
 }
 
-type UserService struct {
+type AuthService struct {
 	userRepo            IUserRepository
 	jwtService          IJwtService
 	refreshTokenService ITokenService
 }
 
-func NewUserService(userRepo IUserRepository, jwtService IJwtService,
-	refreshTokenService ITokenService) *UserService {
-	return &UserService{
+func NewAuthService(userRepo IUserRepository, jwtService IJwtService,
+	refreshTokenService ITokenService) *AuthService {
+	return &AuthService{
 		userRepo:            userRepo,
 		jwtService:          jwtService,
 		refreshTokenService: refreshTokenService,
 	}
 }
 
-func (us *UserService) CreateUser(dto *models.CreateUserRequest) error {
+func (s *AuthService) CreateUser(dto *models.CreateUserRequest) error {
 	passwordHash, err := utils.HashPassword([]byte(dto.PlainPassword))
 	if err != nil {
 		return fmt.Errorf("err in CreateUser: %w", err)
@@ -55,11 +56,11 @@ func (us *UserService) CreateUser(dto *models.CreateUserRequest) error {
 		PasswordHash: passwordHash,
 	}
 
-	return us.userRepo.CreateUser(context.Background(), entity)
+	return s.userRepo.CreateUser(context.Background(), entity)
 }
 
-func (us *UserService) GetUserByEmail(email string) (*models.UserDTO, error) {
-	userEntity, err := us.userRepo.GetUserByEmail(context.Background(), email)
+func (s *AuthService) GetUserByEmail(email string) (*models.UserDTO, error) {
+	userEntity, err := s.userRepo.GetUserByEmail(context.Background(), email)
 	if err != nil {
 		return nil, fmt.Errorf("err in GetUserByEmail: %w", err)
 	}
@@ -67,26 +68,26 @@ func (us *UserService) GetUserByEmail(email string) (*models.UserDTO, error) {
 	return userEntity.ToUserDTO(), nil
 }
 
-func (us *UserService) Login(email, plainPassword string) (accessToken string, refreshToken string, err error) {
-	userEntity, err := us.userRepo.GetUserByEmail(context.Background(), email)
+func (s *AuthService) Login(email, plainPassword string) (accessToken string, refreshToken string, err error) {
+	userEntity, err := s.userRepo.GetUserByEmail(context.Background(), email)
 	if err != nil {
 		return "", "", fmt.Errorf("err in Login: %w", err)
 	}
 
 	if userEntity == nil {
-		return "", "", models.ErrUserNotFound
+		return "", "", errs.ErrUserNotFound
 	}
 
 	if err := utils.ComparePassword(userEntity.PasswordHash, []byte(plainPassword)); err != nil {
-		return "", "", models.ErrPasswordMismatch
+		return "", "", errs.ErrPasswordMismatch
 	}
 
-	accessToken, err = us.jwtService.CreateToken(userEntity.ToUserDTO())
+	accessToken, err = s.jwtService.CreateToken(userEntity.ToUserDTO())
 	if err != nil {
 		return "", "", fmt.Errorf("err in Login: %w", err)
 	}
 
-	refreshToken, err = us.refreshTokenService.CreateToken(userEntity.ID)
+	refreshToken, err = s.refreshTokenService.CreateToken(userEntity.ID)
 	if err != nil {
 		return "", "", fmt.Errorf("err in Login: %w", err)
 	}
@@ -94,18 +95,18 @@ func (us *UserService) Login(email, plainPassword string) (accessToken string, r
 	return accessToken, refreshToken, nil
 }
 
-func (us *UserService) RefreshAccessToken(refreshToken string) (string, error) {
-	user_id, err := us.refreshTokenService.ValidateToken(refreshToken)
+func (s *AuthService) RefreshAccessToken(refreshToken string) (string, error) {
+	user_id, err := s.refreshTokenService.ValidateToken(refreshToken)
 	if err != nil {
 		return "", fmt.Errorf("err in RefreshAccessToken: %w", err)
 	}
 
-	userEntity, err := us.userRepo.GetUserByID(context.Background(), user_id)
+	userEntity, err := s.userRepo.GetUserByID(context.Background(), user_id)
 	if err != nil {
 		return "", fmt.Errorf("err in RefreshAccessToken: %w", err)
 	}
 
-	accessToken, err := us.jwtService.CreateToken(userEntity.ToUserDTO())
+	accessToken, err := s.jwtService.CreateToken(userEntity.ToUserDTO())
 	if err != nil {
 		return "", fmt.Errorf("err in RefreshAccessToken: %w", err)
 	}

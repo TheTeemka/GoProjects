@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/TheTeemka/GoProjects/hw_6/utils"
+	"github.com/TheTeemka/GoProjects/hw/utils"
 )
 
 type ITokenRepository interface {

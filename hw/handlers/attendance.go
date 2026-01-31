@@ -3,8 +3,8 @@ package handlers
 import (
 	"strconv"
 
-	"github.com/TheTeemka/GoProjects/hw_6/models"
-	"github.com/TheTeemka/GoProjects/hw_6/services"
+	"github.com/TheTeemka/GoProjects/hw/models"
+	"github.com/TheTeemka/GoProjects/hw/services"
 	"github.com/labstack/echo/v4"
 )
 

@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS tokens (
     type VARCHAR(16) NOT NULL,
     token VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
-    expires_at TIMESTAMP NOT NULL
+    expires_at TIMESTAMP NOT NULL,
+    revoked_at TIMESTAMP
 );
 
 CREATE INDEX idx_tokens_user_id_token ON tokens(user_id, token);

@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/TheTeemka/GoProjects/hw_6/models"
+	"github.com/TheTeemka/GoProjects/hw/errs"
+	"github.com/TheTeemka/GoProjects/hw/models"
+	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 )
 
@@ -23,7 +25,7 @@ func (ur *UserRepository) CreateUser(ctx context.Context, user *models.UserEntit
 
 	_, err := ur.conn.Exec(ctx, query, user.Email, user.Role, user.PasswordHash)
 	if err != nil {
-		return err
+		return ur.HandleSQLerr(err)
 	}
 	return nil
 }
@@ -35,10 +37,7 @@ func (ur *UserRepository) GetUserByEmail(ctx context.Context, email string) (*mo
 	var user models.UserEntity
 	err := row.Scan(&user.ID, &user.Email, &user.Role, &user.PasswordHash)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, models.ErrUserNotFound
-		}
-		return nil, err
+		return nil, ur.HandleSQLerr(err)
 	}
 
 	return &user, nil
@@ -51,11 +50,26 @@ func (ur *UserRepository) GetUserByID(ctx context.Context, user_id int) (*models
 	var user models.UserEntity
 	err := row.Scan(&user.ID, &user.Email, &user.Role, &user.PasswordHash)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, models.ErrUserNotFound
-		}
-		return nil, err
+		return nil, ur.HandleSQLerr(err)
 	}
 
 	return &user, nil
+}
+
+func (ur *UserRepository) HandleSQLerr(err error) error {
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) {
+		// 23505 is unique_violation
+		if pgErr.Code == "23505" {
+			return errs.ErrUserAlreadyExists
+		}
+	}
+
+	if errors.As(err, &pgErr) {
+		if pgErr.Code == "23505" {
+			return errs.ErrUserAlreadyExists
+		}
+	}
+
+	return err
 }

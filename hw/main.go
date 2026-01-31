@@ -4,11 +4,11 @@ import (
 	"context"
 	"log"
 
-	"github.com/TheTeemka/GoProjects/hw_6/config"
-	"github.com/TheTeemka/GoProjects/hw_6/database"
-	"github.com/TheTeemka/GoProjects/hw_6/handlers"
-	"github.com/TheTeemka/GoProjects/hw_6/repository"
-	"github.com/TheTeemka/GoProjects/hw_6/services"
+	"github.com/TheTeemka/GoProjects/hw/config"
+	"github.com/TheTeemka/GoProjects/hw/database"
+	"github.com/TheTeemka/GoProjects/hw/handlers"
+	"github.com/TheTeemka/GoProjects/hw/repository"
+	"github.com/TheTeemka/GoProjects/hw/services"
 )
 
 func main() {
@@ -35,11 +35,15 @@ func main() {
 	attendanceService := services.NewAttendanceService(attendanceRepo)
 	attendanceHandler := handlers.NewAttendanceHandler(attendanceService)
 
+	studentRepo := repository.NewStudentRepository(conn)
+	studentService := services.NewStudentsService(studentRepo)
+	studentHandler := handlers.NewStudentsHandler(studentService)
+
 	userRepo := repository.NewUserRepository(conn)
-	userService := services.NewUserService(userRepo, jwtService, refreshTokenService)
+	userService := services.NewAuthService(userRepo, jwtService, refreshTokenService)
 	userHandler := handlers.NewUserHandler(userService)
 
-	e := handlers.RegisterRoutes(userHandler, attendanceHandler, scheduleHandler, jwtService)
+	e := handlers.RegisterRoutes(userHandler, attendanceHandler, scheduleHandler, studentHandler, jwtService)
 	log.Println("Starting server on port", cfg.Port)
 	if err := e.Start(cfg.Port); err != nil {
 		log.Fatalf("Error: %s", err)

@@ -1,6 +1,10 @@
 package models
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/TheTeemka/GoProjects/hw/errs"
+)
 
 type UserDTO struct {
 	ID           int      `json:"id"`
@@ -63,7 +67,7 @@ var roleMap = map[string]UserRole{
 func ParseUserRole(role string) (UserRole, error) {
 	r, exists := roleMap[strings.ToLower(role)]
 	if !exists {
-		return "", ErrInvalidUserRole
+		return "", errs.ErrInvalidUserRole
 	}
 	return r, nil
 }
