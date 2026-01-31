@@ -119,7 +119,7 @@ func (uh *AuthHandler) Login(c echo.Context) error {
 func (uh *AuthHandler) RefreshAccessToken(c echo.Context) error {
 	cookie, err := c.Cookie("refresh_token")
 	if err != nil {
-		return c.JSON(401, map[string]string{"error": "unauthorized"})
+		return c.JSON(401, map[string]string{"error": "does not have cookie"})
 	}
 	refreshToken := cookie.Value
 

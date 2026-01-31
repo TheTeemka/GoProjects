@@ -7,10 +7,12 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/jackc/pgx/v4 v4.18.3
 	github.com/joho/godotenv v1.5.1
-	github.com/labstack/echo/v4 v4.9.0
+	github.com/labstack/echo/v4 v4.11.4
 	github.com/pressly/goose/v3 v3.26.0
+	github.com/rdbell/echo-pretty-logger v1.0.0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.6
+	github.com/vertica/vertica-sql-go v1.3.3
 	golang.org/x/crypto v0.46.0
 )
 
@@ -53,7 +55,7 @@ require (
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
-	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
+	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.39.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

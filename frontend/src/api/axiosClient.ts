@@ -1,3 +1,4 @@
+import { type LoginResponse } from "@/types/user";
 import axios, { AxiosError, type AxiosInstance } from "axios";
 
 const apiClient: AxiosInstance = axios.create({
@@ -10,12 +11,13 @@ async function refreshToken(): Promise<string | null> {
   if (!refreshPromise) {
     refreshPromise = (async () => {
       try {
-        const res = await axios.post(
-          "/auth/refresh",
-          {},
-          { baseURL: apiClient.defaults.baseURL },
-        );
-        const newToken = res.data?.accessToken ?? null;
+        const res = await axios.post<LoginResponse>("/auth/refresh", null, {
+          baseURL: apiClient.defaults.baseURL,
+          withCredentials: true,
+        });
+
+        const newToken = res.data?.access_token ?? null;
+        localStorage.setItem("accessToken", newToken);
         if (newToken) {
           localStorage.setItem("accessToken", newToken);
         } else {

@@ -1,4 +1,4 @@
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth/useAuth";
 import { Navigate, Outlet } from "react-router";
 
 export function DashboardLayout() {
