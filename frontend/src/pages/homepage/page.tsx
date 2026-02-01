@@ -1,7 +1,17 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { Navigate } from "react-router";
+import { useAuth } from "@/contexts/auth";
 
 export default function HomePage() {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" />;
+  }
   return (
     <div className="min-h-screen flex justify-center px-4">
       <div className="mt-45 w-full max-w-full rounded-lg text-center px-6 sm:px-12">

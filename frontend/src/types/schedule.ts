@@ -6,6 +6,7 @@ export type WeekDay =
   | "Friday";
 // | "Saturday"
 // | "Sunday";
+
 export type ScheduleEvent = {
   id: string;
   subject: string;

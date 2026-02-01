@@ -1,6 +1,6 @@
 import type { ScheduleEvent, WeekDay } from "@/types/schedule";
 import React from "react";
-import { HoursAndMinutesToDecimalTime } from "@/lib/timeConverter";
+import { HoursAndMinutesToDecimalTime } from "@/lib/time";
 // ...existing code...
 const SUBJECT_COLOR_PALETTE: string[] = [
   "bg-red-400",
