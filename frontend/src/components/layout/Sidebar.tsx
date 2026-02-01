@@ -1,11 +1,5 @@
 import { NavLink, useNavigate } from "react-router";
-import {
-  Users,
-  Calendar,
-  ClipboardCheck,
-  LogOut,
-  GraduationCap,
-} from "lucide-react";
+import { Users, Calendar, ClipboardCheck, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";

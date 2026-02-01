@@ -14,38 +14,49 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/lib/toast";
+import type {
+  CreateScheduleRequest,
+  ScheduleEvent,
+  WeekDay,
+} from "@/types/schedule";
 import { Plus } from "lucide-react";
-import type { CreateStudentRequest } from "@/types/student";
 
-export interface AddStudentModalProps {
-  defaultGroupId?: number;
+export interface AddScheduleModalProps {
   trigger?: React.ReactNode;
-  onConfirm?: (req: CreateStudentRequest) => Promise<boolean>;
+  onConfirm?: (req: Omit<ScheduleEvent, "id">) => Promise<boolean>;
   onSuccess?: () => void;
 }
 
-export function AddStudentModal({
-  defaultGroupId = 1,
+const weekDays: WeekDay[] = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+];
+
+export function AddScheduleModal({
   trigger,
   onConfirm,
   onSuccess,
-}: AddStudentModalProps) {
+}: AddScheduleModalProps) {
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [group_id, setGroupId] = useState<number>(defaultGroupId);
+  const [subject, setSubject] = useState("");
+  const [day, setDay] = useState<number>(-1);
+  const [startTime, setStartTime] = useState("00:00");
+  const [endTime, setEndTime] = useState("00:00");
   const [loading, setLoading] = useState(false);
 
   const reset = () => {
-    setName("");
-    setEmail("");
-    setBirthday("");
-    setGroupId(defaultGroupId);
+    setSubject("");
+    setDay(-1);
+    setStartTime("00:00");
+    setEndTime("00:00");
   };
 
   const handleSubmit = async () => {
-    if (!name || !email || !birthday || !group_id) {
+    console.log({ subject, day, startTime, endTime });
+    if (!subject || day === -1 || !startTime || !endTime) {
       toast.warn("Please fill all fields");
       return;
     }
@@ -57,25 +68,25 @@ export function AddStudentModal({
 
     setLoading(true);
     try {
-      const formattedBirthday = new Date(birthday).toISOString();
-      const req: CreateStudentRequest = {
-        name,
-        email,
-        birthday: formattedBirthday,
-        group_id,
+      const req: CreateScheduleRequest = {
+        subject,
+        day_of_week: day,
+        start_time: startTime,
+        end_time: endTime,
+        group_id: 1,
       };
       const success = await onConfirm(req);
       if (success) {
-        toast.success("Student created");
+        toast.success("Schedule created");
         setOpen(false);
         reset();
         onSuccess?.();
       } else {
-        toast.error("Failed to create student");
+        toast.error("Failed to create schedule");
       }
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to create student",
+        err instanceof Error ? err.message : "Failed to create schedule",
       );
     } finally {
       setLoading(false);
@@ -85,7 +96,7 @@ export function AddStudentModal({
   const triggerNode = (trigger as React.ReactNode) ?? (
     <Button className="ml-auto">
       <Plus className="mr-2 h-4 w-4" />
-      Add Student
+      Add Event
     </Button>
   );
 
@@ -94,49 +105,52 @@ export function AddStudentModal({
       <DialogTrigger asChild>{triggerNode}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Student</DialogTitle>
+          <DialogTitle>Add Schedule Event</DialogTitle>
           <DialogDescription>
-            Fill in student details and save.
+            Add a new schedule event to the group calendar.
           </DialogDescription>
         </DialogHeader>
 
         <div className="p-4 space-y-4">
           <div className="grid gap-2">
-            <Label>Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
-
-          <div className="grid gap-2">
-            <Label>Email</Label>
+            <Label>Subject</Label>
             <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
             />
           </div>
 
           <div className="grid gap-2">
-            <Label>Birthday</Label>
+            <Label>Day</Label>
+            <select
+              value={day}
+              onChange={(e) => setDay(Number(e.target.value))}
+              className="h-9 w-full rounded-md border bg-transparent px-3 text-base"
+            >
+              <option value={-1}>Select day</option>
+              {weekDays.map((d, index) => (
+                <option key={d} value={index}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid gap-2">
+            <Label>Start time</Label>
             <Input
-              type="date"
-              value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
+              type="time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
             />
           </div>
 
           <div className="grid gap-2">
-            <Label>Group ID</Label>
+            <Label>End time</Label>
             <Input
-              disabled
-              type="number"
-              value={String(group_id ?? "")}
-              onChange={(e) => {
-                if (e.target.value !== "") {
-                  setGroupId(Number(e.target.value));
-                } else {
-                  setGroupId(0);
-                }
-              }}
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
             />
           </div>
         </div>
@@ -160,4 +174,4 @@ export function AddStudentModal({
   );
 }
 
-export default AddStudentModal;
+export default AddScheduleModal;

@@ -32,7 +32,7 @@ export default function RegisterPage() {
     try {
       setLoading(true);
       await register(email, password, role);
-      navigate("/");
+      navigate("/login");
     } catch (err: any) {
       setError(err?.message ?? "Failed to register");
     } finally {

@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import LoginPage from "@/pages/login/page";
 import HomePage from "@/pages/homepage/page";
 import RegisterPage from "./pages/register/page";
@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <div> Dashboarding. time</div>,
+        element: <Navigate to="students" replace />,
       },
       {
         path: "schedule",

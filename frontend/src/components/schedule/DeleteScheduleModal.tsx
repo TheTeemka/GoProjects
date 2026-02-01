@@ -12,19 +12,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 
-export interface DeleteStudentModalProps {
-  id?: number | null;
-  onConfirm?: (id: number) => Promise<boolean>;
+export interface DeleteScheduleModalProps {
+  id?: string | null;
+  onConfirm?: (id: string) => Promise<boolean>;
   onSuccess?: () => void;
   onClose?: () => void;
 }
 
-export function DeleteStudentModal({
+export function DeleteScheduleModal({
   id,
   onConfirm,
   onSuccess,
   onClose,
-}: DeleteStudentModalProps) {
+}: DeleteScheduleModalProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -42,16 +42,16 @@ export function DeleteStudentModal({
     try {
       const success = await onConfirm(id);
       if (success) {
-        toast.success("Student deleted");
+        toast.success("Event deleted");
         onSuccess?.();
         setOpen(false);
         onClose?.();
       } else {
-        toast.error("Failed to delete student");
+        toast.error("Failed to delete event");
       }
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to delete student",
+        err instanceof Error ? err.message : "Failed to delete event",
       );
     } finally {
       setLoading(false);
@@ -68,9 +68,9 @@ export function DeleteStudentModal({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Student</DialogTitle>
+          <DialogTitle>Delete Event</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this student?
+            Are you sure you want to delete this event?
           </DialogDescription>
         </DialogHeader>
 
@@ -100,4 +100,4 @@ export function DeleteStudentModal({
   );
 }
 
-export default DeleteStudentModal;
+export default DeleteScheduleModal;

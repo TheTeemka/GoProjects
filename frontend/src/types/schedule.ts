@@ -4,13 +4,14 @@ export type WeekDay =
   | "Wednesday"
   | "Thursday"
   | "Friday";
-// | "Saturday"
-// | "Sunday";
 
 export type ScheduleEvent = {
   id: string;
+  group_id: number;
   subject: string;
   start_time: string;
   end_time: string;
-  day: WeekDay;
+  day_of_week: number;
 };
+
+export type CreateScheduleRequest = Omit<ScheduleEvent, "id">;

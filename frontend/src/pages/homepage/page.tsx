@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Navigate } from "react-router";
 import { useAuth } from "@/contexts/auth";

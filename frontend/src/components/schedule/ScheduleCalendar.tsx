@@ -1,6 +1,7 @@
 import type { ScheduleEvent, WeekDay } from "@/types/schedule";
 import React from "react";
 import { HoursAndMinutesToDecimalTime } from "@/lib/time";
+import { X } from "lucide-react";
 // ...existing code...
 const SUBJECT_COLOR_PALETTE: string[] = [
   "bg-red-400",
@@ -25,19 +26,20 @@ function getColorForSubject(subject: string): string {
   return SUBJECT_COLOR_PALETTE[idx];
 }
 
-export function ScheduleCalendar({ events }: { events: ScheduleEvent[] }) {
-  const eventsByDay: Record<WeekDay, ScheduleEvent[]> = {
-    Monday: [],
-    Tuesday: [],
-    Wednesday: [],
-    Thursday: [],
-    Friday: [],
-    // Saturday: [],
-    // Sunday: [],
-  };
+export function ScheduleCalendar({
+  events,
+  onDeleteEventClick,
+}: {
+  events: ScheduleEvent[];
+  onDeleteEventClick?: (event: ScheduleEvent) => void;
+}) {
+  const eventsByDay: Record<number, ScheduleEvent[]> = {};
 
   for (const event of events) {
-    eventsByDay[event.day].push(event);
+    if (!eventsByDay[event.day_of_week]) {
+      eventsByDay[event.day_of_week] = [];
+    }
+    eventsByDay[event.day_of_week].push(event);
   }
 
   const daysOfWeek: WeekDay[] = [
@@ -46,8 +48,6 @@ export function ScheduleCalendar({ events }: { events: ScheduleEvent[] }) {
     "Wednesday",
     "Thursday",
     "Friday",
-    // "Saturday",
-    // "Sunday",
   ];
 
   const calendarStartHour = 8;
@@ -120,13 +120,15 @@ export function ScheduleCalendar({ events }: { events: ScheduleEvent[] }) {
                     </div>
                     <div key={day} className="relative">
                       {isToday && <CurrentTimeIndicator />}
-                      {eventsByDay[day].map((event) => (
-                        <EventCard
-                          key={event.id}
-                          event={event}
-                          color={getColorForSubject(event.subject)}
-                        />
-                      ))}
+                      {eventsByDay[index] &&
+                        eventsByDay[index].map((event) => (
+                          <EventCard
+                            key={event.id}
+                            event={event}
+                            color={getColorForSubject(event.subject)}
+                            onDeleteEventClick={onDeleteEventClick}
+                          />
+                        ))}
                     </div>
                   </div>
                 );
@@ -142,23 +144,38 @@ export function ScheduleCalendar({ events }: { events: ScheduleEvent[] }) {
 interface EventCardProps {
   event: ScheduleEvent;
   color?: string;
+  onDeleteEventClick?: (event: ScheduleEvent) => void;
 }
 
-function EventCard({ event, color = "bg-chart-1" }: EventCardProps) {
+function EventCard({
+  event,
+  color = "bg-chart-1",
+  onDeleteEventClick,
+}: EventCardProps) {
   const startHour = HoursAndMinutesToDecimalTime(event.start_time);
   const endHour = HoursAndMinutesToDecimalTime(event.end_time);
   const durationHours = endHour - startHour;
 
-  console.log({ startHour, endHour, durationHours });
   const positionStyle: React.CSSProperties = {
     top: `calc(var(--height-event-card) * ${startHour - 8})`,
     height: `calc(var(--height-event-card) * ${durationHours})`,
   };
   return (
     <div
-      className={`${color} relative  text-white text-xs p-2 rounded mb-1 cursor-pointer hover:opacity-90 transition-opacity`}
+      className={`${color} relative  text-white text-xs m-0.5 p-3 rounded mb-1 cursor-pointer  transition-opacity`}
       style={positionStyle}
     >
+      <button
+        aria-label={`Delete ${event.subject}`}
+        className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded bg-white/20 hover:bg-white/30 text-white"
+        onClick={(e) => {
+          e.stopPropagation();
+          onDeleteEventClick?.(event);
+        }}
+      >
+        <X className="size-3" />
+      </button>
+
       <div className="font-semibold">{event.subject}</div>
       <div className="text-xs opacity-90">
         {event.start_time} - {event.end_time}
