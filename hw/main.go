@@ -48,6 +48,7 @@ func main() {
 	userHandler := handlers.NewUserHandler(userService)
 
 	e := handlers.RegisterRoutes(userHandler, attendanceHandler, scheduleHandler, studentHandler, groupHandler, jwtService)
+
 	log.Println("Starting server on port", cfg.Port)
 	if err := e.Start(cfg.Port); err != nil {
 		log.Fatalf("Error: %s", err)
