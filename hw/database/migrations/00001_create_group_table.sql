@@ -20,6 +20,12 @@ CREATE TRIGGER update_groups_updated_at
     BEFORE UPDATE ON groups
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
+
+
+INSERT INTO groups (name, enrollment_year) VALUES
+('Group A', 2020),
+('Group B', 2021),
+('Group C', 2022);
 -- +goose StatementEnd
 
 -- +goose Down

@@ -71,7 +71,7 @@ func (h *AuthHandler) GetMe(c echo.Context) error {
 
 	userDTO, err := h.userService.GetUserByEmail(email)
 	if err != nil {
-		return c.JSON(500, map[string]string{"error": err.Error()})
+		return err
 	}
 
 	if userDTO == nil {

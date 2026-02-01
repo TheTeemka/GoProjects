@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS schedules (
     group_id INT NOT NULL REFERENCES groups(id),
     subject TEXT NOT NULL,
     day_of_week INT NOT NULL,
-    start_time TEXT NOT NULL,
-    end_time TEXT NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP
 );

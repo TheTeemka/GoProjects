@@ -39,10 +39,12 @@ func RegisterRoutes(userHandler *AuthHandler, attHandler *AttendanceHandler, sch
 	}
 
 	{
-		schGroup := e.Group("/schedule")
+		schGroup := e.Group("/schedules")
+		schGroup.POST("", scheduleHandler.CreateSchedule)
 		schGroup.GET("/student/:id", scheduleHandler.GetForStudent)
-		schGroup.GET("/schedule/group/:id", scheduleHandler.GetForGroup)
+		schGroup.GET("/group/:id", scheduleHandler.GetForGroup)
 		schGroup.GET("/all_class_schedule", scheduleHandler.GetForAll)
+		schGroup.DELETE("/:id", scheduleHandler.DeleteSchedule)
 	}
 
 	{
