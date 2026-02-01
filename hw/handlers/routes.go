@@ -12,7 +12,7 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-func RegisterRoutes(userHandler *AuthHandler, attHandler *AttendanceHandler, scheduleHandler *ScheduleHandler, studentsHandler *StudentsHandler, jwtService *services.JWTService) *echo.Echo {
+func RegisterRoutes(userHandler *AuthHandler, attHandler *AttendanceHandler, scheduleHandler *ScheduleHandler, studentsHandler *StudentsHandler, groupHandler *GroupHandler, jwtService *services.JWTService) *echo.Echo {
 	e := echo.New()
 	e.GET("/health", HealthCheck)
 
@@ -54,7 +54,11 @@ func RegisterRoutes(userHandler *AuthHandler, attHandler *AttendanceHandler, sch
 		stGroup.PUT("/:id", studentsHandler.UpdateStudent)
 		stGroup.DELETE("/:id", studentsHandler.DeleteStudent)
 	}
-
+	{
+		grGroup := e.Group("/groups")
+		grGroup.POST("", groupHandler.CreateGroup)
+		grGroup.GET("/:id", groupHandler.GetGroupByID)
+	}
 	{
 		authGroup := e.Group("/auth")
 		authGroup.POST("/register", userHandler.CreateUser)

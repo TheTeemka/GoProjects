@@ -39,11 +39,15 @@ func main() {
 	studentService := services.NewStudentsService(studentRepo)
 	studentHandler := handlers.NewStudentsHandler(studentService)
 
+	groupRepo := repository.NewGroupRepository(conn)
+	groupService := services.NewGroupService(groupRepo)
+	groupHandler := handlers.NewGroupHandler(groupService)
+
 	userRepo := repository.NewUserRepository(conn)
 	userService := services.NewAuthService(userRepo, jwtService, refreshTokenService)
 	userHandler := handlers.NewUserHandler(userService)
 
-	e := handlers.RegisterRoutes(userHandler, attendanceHandler, scheduleHandler, studentHandler, jwtService)
+	e := handlers.RegisterRoutes(userHandler, attendanceHandler, scheduleHandler, studentHandler, groupHandler, jwtService)
 	log.Println("Starting server on port", cfg.Port)
 	if err := e.Start(cfg.Port); err != nil {
 		log.Fatalf("Error: %s", err)

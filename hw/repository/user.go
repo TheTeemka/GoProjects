@@ -57,15 +57,13 @@ func (ur *UserRepository) GetUserByID(ctx context.Context, user_id int) (*models
 }
 
 func (ur *UserRepository) HandleSQLerr(err error) error {
+	if errors.Is(err, pgx.ErrNoRows) {
+		return errs.ErrUserNotFound
+	}
+
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) {
 		// 23505 is unique_violation
-		if pgErr.Code == "23505" {
-			return errs.ErrUserAlreadyExists
-		}
-	}
-
-	if errors.As(err, &pgErr) {
 		if pgErr.Code == "23505" {
 			return errs.ErrUserAlreadyExists
 		}

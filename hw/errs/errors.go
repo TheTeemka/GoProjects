@@ -12,5 +12,6 @@ var (
 	ErrPasswordMismatch   = errors.New("password mismatch")
 	ErrInvalidCredentials = errors.New("invalid credentials")
 
+	ErrGroupNotFound   = errors.New("group not found")
 	ErrStudentNotFound = errors.New("student not found")
 )

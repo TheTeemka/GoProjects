@@ -98,7 +98,9 @@ func (r *StudentRepository) GetStudentsByGroupID(ctx context.Context, groupID in
 }
 
 func (r *StudentRepository) ListStudents(ctx context.Context, filter *models.StudentFilter) ([]*models.StudentEntity, error) {
-	query := squirrel.Select("id", "name", "email", "birthday", "group_id", "created_at", "updated_at").From("students")
+	query := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar).
+		Select("id", "name", "email", "birthday", "group_id", "created_at", "updated_at").
+		From("students")
 
 	query = FilterToSQL(query, filter)
 
@@ -167,12 +169,18 @@ func FilterToSQL(builder squirrel.SelectBuilder, filter *models.StudentFilter) s
 		builder = builder.Where(squirrel.Eq{"group_id": *filter.GroupID})
 	}
 
+	var Orrs squirrel.Or
+
 	if filter.Name != nil {
-		builder = builder.Where(squirrel.Like{"name": "%" + *filter.Name + "%"})
+		Orrs = append(Orrs, squirrel.Like{"name": "%" + *filter.Name + "%"})
 	}
 
 	if filter.Email != nil {
-		builder = builder.Where(squirrel.Like{"email": "%" + *filter.Email + "%"})
+		Orrs = append(Orrs, squirrel.Like{"email": "%" + *filter.Email + "%"})
+	}
+
+	if len(Orrs) > 0 {
+		builder = builder.Where(Orrs)
 	}
 
 	if filter.Limit != 0 {
